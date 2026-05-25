@@ -1,11 +1,19 @@
 import { ArrowRight, ListChecks, SlidersHorizontal } from "lucide-react";
+import { useEffect } from "react";
 
+import { useQuizStore } from "../features/quiz/stores/quizStore";
 import { ButtonLink } from "../shared/components/Button";
 import { Card } from "../shared/components/Card";
 import { PageShell } from "../shared/components/PageShell";
 import { Illustration } from "../shared/illustrations";
 
 export function QuizIntroPage() {
+  const reset = useQuizStore((state) => state.reset);
+
+  useEffect(() => {
+    reset();
+  }, [reset]);
+
   return (
     <PageShell>
       <div className="grid gap-8 md:grid-cols-[1fr_320px] md:items-center">

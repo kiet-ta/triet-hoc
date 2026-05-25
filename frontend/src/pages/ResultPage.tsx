@@ -2,6 +2,7 @@ import { RefreshCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+import { useQuizStore } from "../features/quiz/stores/quizStore";
 import { ResultExplanation } from "../features/results/components/ResultExplanation";
 import { ScoreBarChart } from "../features/results/components/ScoreBarChart";
 import { ShareResultButton } from "../features/results/components/ShareResultButton";
@@ -18,6 +19,7 @@ import { formatPercent } from "../shared/utils/formatPercent";
 
 export function ResultPage() {
   const { shareSlug } = useParams();
+  const reset = useQuizStore((state) => state.reset);
   const [result, setResult] = useState<PublicResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -72,7 +74,7 @@ export function ResultPage() {
             </div>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <ShareResultButton shareSlug={result.shareSlug} />
-              <ButtonLink to="/quiz/intro" variant="ghost">
+              <ButtonLink to="/quiz/intro" variant="ghost" onClick={reset}>
                 <RefreshCcw className="h-4 w-4" aria-hidden="true" />
                 Làm lại quiz
               </ButtonLink>
