@@ -63,7 +63,7 @@ export function AboutPage() {
             </h1>
 
             <p className="mt-6 text-lg font-semibold leading-relaxed text-ink/80">
-              Chào mừng bạn đến với <strong>TriếtLýLàGì?</strong> - dự án "giải cứu giấc ngủ" cực kỳ chất lượng được sáng tạo bởi các sinh viên xuất sắc lớp Triết học <strong>MLN121</strong> tại Đại học FPT TP. Hồ Chí Minh!
+              Chào mừng bạn đến với <strong>Triết Học Là Gì</strong> - dự án "giải cứu giấc ngủ" cực kỳ chất lượng được sáng tạo bởi các sinh viên xuất sắc lớp Triết học <strong>MLN121</strong> tại Đại học FPT TP. Hồ Chí Minh!
             </p>
 
             <div className="mt-6 space-y-4 text-base leading-relaxed text-ink/70">

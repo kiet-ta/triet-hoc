@@ -7,7 +7,7 @@ export function LandingPage() {
   return (
     <div className="min-h-screen">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <div className="text-lg font-black">TriếtLýLàGì?</div>
+        <div className="text-lg font-black">Triết Học Là Gì</div>
         <ButtonLink to="/history" variant="ghost">
           <History className="h-4 w-4" aria-hidden="true" />
           Lịch sử
@@ -19,7 +19,7 @@ export function LandingPage() {
             <Sparkles className="h-4 w-4 text-coral" aria-hidden="true" />
             Quiz học thuật nhưng không làm mặt nghiêm 24/7
           </div>
-          <h1 className="text-5xl font-black leading-none text-ink md:text-7xl">TriếtLýLàGì?</h1>
+          <h1 className="text-5xl font-black leading-none text-ink md:text-7xl">Triết Học Là Gì</h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg font-semibold leading-8 text-ink/75">
             Một bài quiz giúp bạn phát hiện mình đang vô tình sống như triết gia nào.
           </p>

@@ -12,7 +12,7 @@ export function PageShell({ children, compact = false }: PageShellProps) {
       <header className="border-b border-ink/10 bg-paper/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <Link to="/" className="text-lg font-black tracking-normal text-ink">
-            TriếtLýLàGì?
+            Triết Học Là Gì
           </Link>
           <nav className="flex items-center gap-2 text-sm font-semibold">
             <Link className="rounded-lg px-3 py-2 hover:bg-white" to="/history">
