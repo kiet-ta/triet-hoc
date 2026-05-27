@@ -50,11 +50,17 @@ def _new_share_slug(db: Session) -> str:
 def submit_survey(
     db: Session, payload: SurveySubmitRequest, user_agent: str | None = None
 ) -> SurveySubmissionOutcome:
-    questions = question_repository.list_active_questions(db)
-    if len(questions) != 20:
-        raise SurveyValidationError("Bài quiz cần đúng 20 câu hỏi đang hoạt động.")
-
     answers_by_code = _answers_by_code(payload)
+    num_answers = len(answers_by_code)
+    
+    if num_answers == 0:
+        raise SurveyValidationError("Bạn chưa trả lời câu hỏi nào.")
+
+    # Get all active questions and slice to match the requested length
+    # This matches the frontend logic which takes the first N questions
+    all_questions = question_repository.list_active_questions(db)
+    questions = all_questions[:num_answers]
+
     expected_codes = {question.code for question in questions}
     submitted_codes = set(answers_by_code)
 
