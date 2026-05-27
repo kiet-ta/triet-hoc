@@ -10,6 +10,20 @@ class ScoreResult:
     rank: int
 
 
+OPPOSING_MAP = {
+    "stoicism": ["epicureanism"],
+    "epicureanism": ["stoicism"],
+    "existentialism": ["nihilism", "confucian_ethics"],
+    "nihilism": ["existentialism"],
+    "confucian_ethics": ["existentialism", "absurdism"],
+    "absurdism": ["confucian_ethics"],
+    "pragmatism": ["idealism"],
+    "idealism": ["materialism", "pragmatism"],
+    "materialism": ["idealism"],
+    "utilitarianism": ["humanism"],
+    "humanism": ["utilitarianism"],
+}
+
 def calculate_scores(
     *,
     answers_by_code: Mapping[str, int],
@@ -21,35 +35,49 @@ def calculate_scores(
 
     for question_code, weights in question_weights_by_code.items():
         answer_value = answers_by_code.get(question_code)
-        for philosophy_key, weight in weights.items():
-            if philosophy_key not in raw_scores:
+        if answer_value is None:
+            continue
+            
+        # Shift 1-5 scale to -2 to +2. So 3 is neutral (0 points).
+        shifted_answer = answer_value - 3 
+        
+        effective_weights = {}
+        for phi_key, weight in weights.items():
+            if weight == 0:
                 continue
-            max_scores[philosophy_key] += 5 * max(weight, 0)
-            if answer_value is not None:
-                raw_scores[philosophy_key] += answer_value * weight
+            effective_weights[phi_key] = effective_weights.get(phi_key, 0) + weight
+            
+            # Apply negative weights to opposing philosophies
+            opposing = OPPOSING_MAP.get(phi_key, [])
+            for opp_key in opposing:
+                effective_weights[opp_key] = effective_weights.get(opp_key, 0) - weight
 
-    # Calculate absolute ratios (0.0 to 1.0)
-    abs_ratios = {
-        key: (raw_scores[key] / max_scores[key]) if max_scores[key] > 0 else 0.0
-        for key in philosophy_keys
-    }
+        for phi_key, eff_weight in effective_weights.items():
+            if phi_key not in raw_scores:
+                continue
+            # Max possible change is 2 * abs(weight)
+            max_scores[phi_key] += 2 * abs(eff_weight)
+            raw_scores[phi_key] += shifted_answer * eff_weight
 
-    total_abs_ratio = sum(abs_ratios.values())
-
-    sorted_scores = sorted(
-        (
+    sorted_scores = []
+    for key in philosophy_keys:
+        max_s = max_scores[key]
+        if max_s > 0:
+            # Map raw score from [-max_s, +max_s] to [0%, 100%]
+            percentage = ((raw_scores[key] + max_s) / (2 * max_s)) * 100
+        else:
+            percentage = 50.0  # Neutral
+            
+        sorted_scores.append(
             ScoreResult(
                 key=key,
                 raw_score=round(raw_scores[key], 2),
-                percentage=round((abs_ratios[key] / total_abs_ratio) * 100, 2)
-                if total_abs_ratio > 0
-                else 0.0,
+                percentage=round(percentage, 2),
                 rank=0,
             )
-            for key in philosophy_keys
-        ),
-        key=lambda item: (-item.percentage, -item.raw_score, item.key),
-    )
+        )
+        
+    sorted_scores.sort(key=lambda item: (-item.percentage, -item.raw_score, item.key))
 
     return [
         ScoreResult(
