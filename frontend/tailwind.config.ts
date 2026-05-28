@@ -29,11 +29,16 @@ export default {
           "20%": { opacity: "1" },
           "80%": { opacity: "1" },
           "100%": { transform: "translateX(300%)", opacity: "0" },
+        },
+        pop: {
+          "0%": { transform: "scale(0.8) translateY(10px)", opacity: "0" },
+          "100%": { transform: "scale(1) translateY(0)", opacity: "1" },
         }
       },
       animation: {
         float: "float 4s ease-in-out infinite",
         transfer: "transfer 1.5s linear infinite",
+        pop: "pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
       },
     },
   },
