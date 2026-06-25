@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Cloud, Sun } from "lucide-react";
+import { Cloud, Sun, Moon } from "lucide-react";
 import { useThemeStore } from "../shared/stores/themeStore";
 
 function ShootingStar({ delay, top, left, isDark }: { delay: number; top: string; left: string; isDark: boolean }) {
@@ -81,6 +81,23 @@ export function AtmosphereBackground() {
       >
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/60 via-slate-900/40 to-transparent" />
         
+        {/* Glowing Moon */}
+        <motion.div 
+          className="absolute right-[20%] text-yellow-200 drop-shadow-[0_0_40px_rgba(253,224,71,0.3)]"
+          style={{ top: "15%" }}
+          initial={false}
+          animate={{ 
+            y: isDark ? 0 : "100vh",
+            rotate: [-5, 5, -5] 
+          }}
+          transition={{ 
+            y: { duration: 1.5, ease: "easeInOut" },
+            rotate: { duration: 10, repeat: Infinity, ease: "easeInOut" }
+          }}
+        >
+          <Moon className="h-28 w-28 fill-yellow-100/30" />
+        </motion.div>
+
         {stars.map((star) => (
           <motion.div
             key={star.id}
@@ -128,9 +145,19 @@ export function AtmosphereBackground() {
         
         {/* Glowing Sun */}
         <motion.div 
-          className="absolute right-[10%] top-[10%] text-orange-400 drop-shadow-[0_0_40px_rgba(251,146,60,0.6)]"
-          animate={{ rotate: 360, scale: [1, 1.05, 1] }}
-          transition={{ rotate: { duration: 60, repeat: Infinity, ease: "linear" }, scale: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
+          className="absolute right-[10%] text-orange-400 drop-shadow-[0_0_40px_rgba(251,146,60,0.6)]"
+          style={{ top: "10%" }}
+          initial={false}
+          animate={{ 
+            y: isDark ? "100vh" : 0,
+            rotate: 360, 
+            scale: [1, 1.05, 1] 
+          }}
+          transition={{ 
+            y: { duration: 1.5, ease: "easeInOut" },
+            rotate: { duration: 60, repeat: Infinity, ease: "linear" }, 
+            scale: { duration: 4, repeat: Infinity, ease: "easeInOut" } 
+          }}
         >
           <Sun className="h-32 w-32 fill-orange-300" />
         </motion.div>
