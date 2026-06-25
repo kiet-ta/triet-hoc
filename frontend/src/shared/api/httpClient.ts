@@ -15,8 +15,10 @@ export class ApiError extends Error {
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const headers = new Headers(options.headers);
-  if (!(options.body instanceof FormData)) {
-    headers.set("Content-Type", "application/json");
+  if (!headers.has("Content-Type")) {
+    if (!(options.body instanceof FormData) && !(options.body instanceof URLSearchParams)) {
+      headers.set("Content-Type", "application/json");
+    }
   }
   let token = options.token;
   if (!token) {
@@ -59,10 +61,14 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 
 export const httpClient = {
   get: <T>(path: string, options?: RequestOptions) => request<T>(path, options),
-  post: <T>(path: string, body?: unknown, options?: RequestOptions) =>
-    request<T>(path, { ...options, method: "POST", body: JSON.stringify(body ?? {}) }),
-  put: <T>(path: string, body?: unknown, options?: RequestOptions) =>
-    request<T>(path, { ...options, method: "PUT", body: JSON.stringify(body ?? {}) }),
+  post: <T>(path: string, body?: unknown, options?: RequestOptions) => {
+    const isSpecialBody = body instanceof FormData || body instanceof URLSearchParams;
+    return request<T>(path, { ...options, method: "POST", body: isSpecialBody ? (body as any) : JSON.stringify(body ?? {}) });
+  },
+  put: <T>(path: string, body?: unknown, options?: RequestOptions) => {
+    const isSpecialBody = body instanceof FormData || body instanceof URLSearchParams;
+    return request<T>(path, { ...options, method: "PUT", body: isSpecialBody ? (body as any) : JSON.stringify(body ?? {}) });
+  },
   delete: <T>(path: string, options?: RequestOptions) =>
     request<T>(path, { ...options, method: "DELETE" }),
 };
