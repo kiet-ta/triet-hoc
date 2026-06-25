@@ -7,7 +7,7 @@ type Props = {
   onNodeClick: (node: KnowledgeNode) => void;
   width: number;
   height: number;
-  bgMode?: "universe" | "blueprint";
+  bgMode?: "universe" | "blueprint" | "paper";
 };
 
 export function KnowledgeGraph({ data, onNodeClick, width, height, bgMode = "universe" }: Props) {
@@ -36,22 +36,44 @@ export function KnowledgeGraph({ data, onNodeClick, width, height, bgMode = "uni
       "#4299E1", // Blue
     ];
     const index = (node.group - 1) % colors.length;
-    return hoverNode === node ? "#FFFFFF" : colors[index];
+    return hoverNode === node ? (bgMode === "paper" ? "#000000" : "#FFFFFF") : colors[index];
   };
 
+  const getContainerStyles = () => {
+    if (bgMode === "blueprint") {
+      return {
+        className: "relative overflow-hidden rounded-3xl shadow-2xl bg-slate-900 border border-slate-800",
+        style: {
+          backgroundImage: `
+            linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: '30px 30px'
+        }
+      };
+    }
+    if (bgMode === "paper") {
+      return {
+        className: "relative overflow-hidden rounded-3xl shadow-2xl bg-[#fdfbf7] border border-slate-200",
+        style: {
+          backgroundImage: `
+            linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: '24px 24px'
+        }
+      };
+    }
+    return {
+      className: "relative overflow-hidden rounded-3xl shadow-2xl bg-[#090a0f] border border-slate-800",
+      style: undefined
+    };
+  };
+
+  const containerProps = getContainerStyles();
+
   return (
-    <div 
-      className={`relative overflow-hidden rounded-3xl shadow-2xl border border-slate-800 ${
-        bgMode === "universe" ? "bg-[#090a0f]" : "bg-slate-900"
-      }`}
-      style={bgMode === "blueprint" ? {
-        backgroundImage: `
-          linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
-        `,
-        backgroundSize: '30px 30px'
-      } : undefined}
-    >
+    <div {...containerProps}>
       {/* Universe background effect */}
       {bgMode === "universe" && (
         <div className="absolute inset-0 pointer-events-none opacity-40 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]" />
@@ -67,11 +89,13 @@ export function KnowledgeGraph({ data, onNodeClick, width, height, bgMode = "uni
         nodeRelSize={hoverNode ? 10 : 8}
         linkDirectionalArrowLength={3.5}
         linkDirectionalArrowRelPos={1}
-        linkColor={(link: any) => 
-          (hoverNode && (link.source === hoverNode || link.target === hoverNode))
-            ? "rgba(255,255,255,0.8)" 
-            : "rgba(255,255,255,0.15)"
-        }
+        linkColor={(link: any) => {
+          const isHovered = hoverNode && (link.source === hoverNode || link.target === hoverNode);
+          if (bgMode === "paper") {
+            return isHovered ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.15)";
+          }
+          return isHovered ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.15)";
+        }}
         linkWidth={(link: any) => 
           (hoverNode && (link.source === hoverNode || link.target === hoverNode)) ? 2 : 1
         }
@@ -126,7 +150,12 @@ export function KnowledgeGraph({ data, onNodeClick, width, height, bgMode = "uni
           const textWidth = ctx.measureText(label).width;
           const bckgDimensions = [textWidth + 10 / globalScale, fontSize + 6 / globalScale];
           
-          ctx.fillStyle = isHover ? "rgba(255, 255, 255, 0.9)" : "rgba(10, 15, 30, 0.7)";
+          if (bgMode === "paper") {
+             ctx.fillStyle = isHover ? "rgba(10, 15, 30, 0.9)" : "rgba(255, 255, 255, 0.9)";
+          } else {
+             ctx.fillStyle = isHover ? "rgba(255, 255, 255, 0.9)" : "rgba(10, 15, 30, 0.7)";
+          }
+
           ctx.beginPath();
           ctx.roundRect(
             node.x - bckgDimensions[0] / 2,
@@ -138,7 +167,11 @@ export function KnowledgeGraph({ data, onNodeClick, width, height, bgMode = "uni
           ctx.fill();
 
           // Draw text
-          ctx.fillStyle = isHover ? "#000000" : "rgba(255, 255, 255, 0.9)";
+          if (bgMode === "paper") {
+            ctx.fillStyle = isHover ? "#FFFFFF" : "rgba(0, 0, 0, 0.9)";
+          } else {
+            ctx.fillStyle = isHover ? "#000000" : "rgba(255, 255, 255, 0.9)";
+          }
           ctx.fillText(label, node.x, textY);
         }}
       />

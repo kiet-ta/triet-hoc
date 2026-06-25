@@ -10,7 +10,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Palette } from "lucide-react";
 
-export type BgMode = "universe" | "blueprint";
+export type BgMode = "universe" | "blueprint" | "paper";
 
 export function KnowledgePage() {
   const [activeNode, setActiveNode] = useState<KnowledgeNode | null>(null);
@@ -45,6 +45,20 @@ export function KnowledgePage() {
     }
   };
 
+  const handleToggleBg = () => {
+    setBgMode(prev => {
+      if (prev === "universe") return "blueprint";
+      if (prev === "blueprint") return "paper";
+      return "universe";
+    });
+  };
+
+  const getBgLabel = () => {
+    if (bgMode === "universe") return "Vũ trụ";
+    if (bgMode === "blueprint") return "Bản vẽ";
+    return "Giấy ô ly";
+  };
+
   return (
     <div className="h-screen w-screen overflow-hidden bg-slate-100 dark:bg-slate-950 flex flex-col relative">
       {/* Header */}
@@ -61,12 +75,12 @@ export function KnowledgePage() {
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Giáo trình MLN122</p>
           </div>
           <button 
-            onClick={() => setBgMode(prev => prev === "universe" ? "blueprint" : "universe")}
+            onClick={handleToggleBg}
             className="flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-800 px-3 text-sm font-bold text-ink dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
             title="Đổi giao diện nền"
           >
             <Palette size={16} />
-            <span className="hidden sm:inline">{bgMode === "universe" ? "Vũ trụ" : "Ô ly kỹ thuật"}</span>
+            <span className="hidden sm:inline">{getBgLabel()}</span>
           </button>
         </div>
       </div>
