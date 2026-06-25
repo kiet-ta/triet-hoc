@@ -8,12 +8,17 @@ from app.services.survey_service import SurveyValidationError, submit_survey
 router = APIRouter(prefix="/survey", tags=["survey"])
 
 
+from app.core.security import get_current_user_optional
+from app.models.user import User
+
 @router.post("/submit", response_model=SurveySubmitResponse)
 def submit(
     payload: SurveySubmitRequest,
     db: Session = Depends(get_db),
+    current_user: User | None = Depends(get_current_user_optional),
 ) -> SurveySubmitResponse:
     try:
-        return submit_survey(db, payload, user_agent=None).response
+        user_id = current_user.id if current_user else None
+        return submit_survey(db, payload, user_id=user_id, user_agent=None).response
     except SurveyValidationError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc

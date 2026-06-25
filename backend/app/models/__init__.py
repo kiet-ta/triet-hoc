@@ -6,6 +6,7 @@ from app.models.survey_answer import SurveyAnswer
 from app.models.survey_result import SurveyResult
 from app.models.survey_result_score import SurveyResultScore
 from app.models.survey_session import SurveySession
+from .user import User
 
 __all__ = [
     "AdminUser",
@@ -16,4 +17,5 @@ __all__ = [
     "SurveyResult",
     "SurveyResultScore",
     "SurveySession",
+    "User",
 ]

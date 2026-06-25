@@ -7,6 +7,9 @@ import { QuizIntroPage } from "../pages/QuizIntroPage";
 import { QuizPage } from "../pages/QuizPage";
 import { ResultPage } from "../pages/ResultPage";
 import { HistoryPage } from "../pages/HistoryPage";
+import { UserHistoryPage } from "../pages/user/HistoryPage";
+import { LoginPage } from "../pages/auth/LoginPage";
+import { RegisterPage } from "../pages/auth/RegisterPage";
 import { AboutPage } from "../pages/AboutPage";
 import { AdminLoginPage } from "../pages/admin/AdminLoginPage";
 import { AdminDashboardPage } from "../pages/admin/AdminDashboardPage";
@@ -22,7 +25,10 @@ export const router = createBrowserRouter([
       { path: "quiz/:courseCode/intro", element: <QuizIntroPage /> },
       { path: "quiz/:courseCode", element: <QuizPage /> },
       { path: "results/:shareSlug", element: <ResultPage /> },
+      { path: "login", element: <LoginPage /> },
+      { path: "register", element: <RegisterPage /> },
       { path: "history", element: <HistoryPage /> },
+      { path: "user/history", element: <UserHistoryPage /> },
       { path: "about", element: <AboutPage /> },
       { path: "admin/login", element: <AdminLoginPage /> },
       { path: "admin", element: <AdminDashboardPage /> },

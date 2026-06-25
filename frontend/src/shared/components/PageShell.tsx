@@ -8,9 +8,13 @@ type PageShellProps = {
 };
 
 import { motion } from "framer-motion";
+import { useAuthStore } from "../../features/auth/stores/authStore";
+
 const MotionLink = motion(Link);
 
 export function PageShell({ children, compact = false }: PageShellProps) {
+  const { isAuthenticated, user, logout } = useAuthStore();
+
   return (
     <div className="min-h-screen">
       <header className="transition-colors">
@@ -20,10 +24,26 @@ export function PageShell({ children, compact = false }: PageShellProps) {
           </MotionLink>
           <nav className="flex items-center gap-2 text-sm font-semibold">
             <ThemeToggle />
-            <MotionLink whileTap={{ scale: 0.95 }} className="rounded-lg px-3 py-2 hover:bg-white dark:hover:bg-ink/20 dark:text-white transition-colors" to="/history">
-              Lịch sử
-            </MotionLink>
-            <MotionLink whileTap={{ scale: 0.95 }} className="rounded-lg px-3 py-2 hover:bg-white dark:hover:bg-ink/20 dark:text-white transition-colors" to="/about">
+            {isAuthenticated ? (
+              <>
+                <MotionLink whileTap={{ scale: 0.95 }} className="rounded-lg px-3 py-2 hover:bg-white dark:hover:bg-ink/20 dark:text-white transition-colors" to="/user/history">
+                  Lịch sử ({user?.name || 'User'})
+                </MotionLink>
+                <button onClick={logout} className="rounded-lg px-3 py-2 hover:bg-white dark:hover:bg-ink/20 dark:text-white transition-colors">
+                  Đăng xuất
+                </button>
+              </>
+            ) : (
+              <>
+                <MotionLink whileTap={{ scale: 0.95 }} className="rounded-lg px-3 py-2 hover:bg-white dark:hover:bg-ink/20 dark:text-white transition-colors" to="/history">
+                  Lịch sử ẩn danh
+                </MotionLink>
+                <MotionLink whileTap={{ scale: 0.95 }} className="rounded-lg bg-teal px-4 py-2 text-white hover:bg-teal-600 transition-colors" to="/login">
+                  Đăng nhập
+                </MotionLink>
+              </>
+            )}
+            <MotionLink whileTap={{ scale: 0.95 }} className="hidden sm:inline-block rounded-lg px-3 py-2 hover:bg-white dark:hover:bg-ink/20 dark:text-white transition-colors" to="/about">
               Về tụi mình 🤝
             </MotionLink>
           </nav>

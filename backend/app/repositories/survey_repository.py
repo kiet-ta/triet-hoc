@@ -13,10 +13,12 @@ def create_session(
     anonymous_client_id: str | None,
     course_code: str,
     share_slug: str,
-    user_agent: str | None,
+    user_agent: str | None = None,
+    user_id: str | None = None,
 ) -> SurveySession:
     session = SurveySession(
         anonymous_client_id=anonymous_client_id,
+        user_id=user_id,
         course_code=course_code,
         share_slug=share_slug,
         user_agent=user_agent,

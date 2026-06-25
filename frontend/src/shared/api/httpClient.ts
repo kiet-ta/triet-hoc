@@ -18,8 +18,21 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   if (!(options.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
   }
-  if (options.token) {
-    headers.set("Authorization", `Bearer ${options.token}`);
+  let token = options.token;
+  if (!token) {
+    try {
+      const authData = localStorage.getItem("auth-storage");
+      if (authData) {
+        const parsed = JSON.parse(authData);
+        token = parsed.state?.token;
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
   }
 
   const response = await fetch(`${API_BASE_URL}${path}`, {

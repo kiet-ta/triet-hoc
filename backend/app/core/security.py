@@ -77,3 +77,36 @@ def get_current_admin(
     if admin is None:
         raise credentials_exception
     return admin
+
+
+user_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
+
+def get_current_user_optional(
+    token: str | None = Depends(user_oauth2_scheme), db: Session = Depends(get_db)
+):
+    from app.models.user import User
+
+    if not token:
+        return None
+
+    try:
+        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
+        subject = payload.get("sub")
+        if subject is None:
+            return None
+    except JWTError:
+        return None
+
+    return db.scalar(select(User).where(User.email == subject))
+
+
+def get_current_user(
+    user=Depends(get_current_user_optional),
+):
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Không thể xác thực người dùng.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user

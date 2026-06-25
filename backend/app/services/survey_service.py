@@ -48,7 +48,7 @@ def _new_share_slug(db: Session) -> str:
 
 
 def submit_survey(
-    db: Session, payload: SurveySubmitRequest, user_agent: str | None = None
+    db: Session, payload: SurveySubmitRequest, user_id: str | None = None, user_agent: str | None = None
 ) -> SurveySubmissionOutcome:
     answers_by_code = _answers_by_code(payload)
     num_answers = len(answers_by_code)
@@ -93,6 +93,7 @@ def submit_survey(
     session = survey_repository.create_session(
         db,
         anonymous_client_id=payload.anonymousClientId,
+        user_id=user_id,
         course_code=payload.courseCode,
         share_slug=_new_share_slug(db),
         user_agent=user_agent,

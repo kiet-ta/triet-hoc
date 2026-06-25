@@ -40,6 +40,15 @@ def list_by_anonymous_client_id(db: Session, anonymous_client_id: str) -> list[S
     return list(db.scalars(stmt).unique().all())
 
 
+def count_unsynced_by_anonymous_client_id(db: Session, anonymous_client_id: str) -> int:
+    stmt = (
+        select(func.count(SurveySession.id))
+        .where(SurveySession.anonymous_client_id == anonymous_client_id)
+        .where(SurveySession.user_id.is_(None))
+    )
+    return int(db.scalar(stmt) or 0)
+
+
 def list_results(db: Session, limit: int = 100) -> list[SurveyResult]:
     stmt = (
         select(SurveyResult)
