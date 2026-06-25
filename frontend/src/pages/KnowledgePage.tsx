@@ -88,11 +88,11 @@ export function KnowledgePage() {
       <div className="flex-1 flex w-full relative">
         <div ref={containerRef} className={`flex-1 h-full transition-all duration-300 ${activeNode ? "pr-[400px] lg:pr-[500px]" : ""}`}>
           {isLoading ? (
-            <div className="h-full w-full flex items-center justify-center bg-white dark:bg-slate-900">
+            <div className="h-full w-full flex items-center justify-center bg-transparent">
               <LoadingState />
             </div>
           ) : error ? (
-            <div className="h-full w-full flex items-center justify-center bg-white dark:bg-slate-900">
+            <div className="h-full w-full flex items-center justify-center bg-transparent">
               <ErrorState message="Không tải được dữ liệu đồ thị." />
             </div>
           ) : data ? (
