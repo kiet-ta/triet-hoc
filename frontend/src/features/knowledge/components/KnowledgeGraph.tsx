@@ -7,9 +7,10 @@ type Props = {
   onNodeClick: (node: KnowledgeNode) => void;
   width: number;
   height: number;
+  bgMode?: "universe" | "blueprint";
 };
 
-export function KnowledgeGraph({ data, onNodeClick, width, height }: Props) {
+export function KnowledgeGraph({ data, onNodeClick, width, height, bgMode = "universe" }: Props) {
   const fgRef = useRef<any>();
   const [hoverNode, setHoverNode] = useState<KnowledgeNode | null>(null);
 
@@ -39,9 +40,22 @@ export function KnowledgeGraph({ data, onNodeClick, width, height }: Props) {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-[#090a0f] border border-slate-800">
+    <div 
+      className={`relative overflow-hidden rounded-3xl shadow-2xl border border-slate-800 ${
+        bgMode === "universe" ? "bg-[#090a0f]" : "bg-slate-900"
+      }`}
+      style={bgMode === "blueprint" ? {
+        backgroundImage: `
+          linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
+        `,
+        backgroundSize: '30px 30px'
+      } : undefined}
+    >
       {/* Universe background effect */}
-      <div className="absolute inset-0 pointer-events-none opacity-40 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]" />
+      {bgMode === "universe" && (
+        <div className="absolute inset-0 pointer-events-none opacity-40 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]" />
+      )}
       
       <ForceGraph2D
         ref={fgRef}

@@ -8,9 +8,13 @@ import { ErrorState } from "../shared/components/ErrorState";
 import { PageShell } from "../shared/components/PageShell";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Palette } from "lucide-react";
+
+export type BgMode = "universe" | "blueprint";
 
 export function KnowledgePage() {
   const [activeNode, setActiveNode] = useState<KnowledgeNode | null>(null);
+  const [bgMode, setBgMode] = useState<BgMode>("universe");
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
 
@@ -51,9 +55,19 @@ export function KnowledgePage() {
         >
           <ArrowLeft size={24} />
         </Link>
-        <div className="rounded-2xl bg-white/80 dark:bg-slate-900/80 shadow-lg backdrop-blur-sm px-6 py-3 pointer-events-auto">
-          <h1 className="text-xl font-black text-ink dark:text-white">Kho tàng Triết học</h1>
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Giáo trình MLN122</p>
+        <div className="rounded-2xl bg-white/80 dark:bg-slate-900/80 shadow-lg backdrop-blur-sm px-6 py-3 pointer-events-auto flex items-center justify-between gap-6">
+          <div>
+            <h1 className="text-xl font-black text-ink dark:text-white">Kho tàng Triết học</h1>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Giáo trình MLN122</p>
+          </div>
+          <button 
+            onClick={() => setBgMode(prev => prev === "universe" ? "blueprint" : "universe")}
+            className="flex h-10 items-center justify-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-800 px-3 text-sm font-bold text-ink dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            title="Đổi giao diện nền"
+          >
+            <Palette size={16} />
+            <span className="hidden sm:inline">{bgMode === "universe" ? "Vũ trụ" : "Ô ly kỹ thuật"}</span>
+          </button>
         </div>
       </div>
 
@@ -73,6 +87,7 @@ export function KnowledgePage() {
               onNodeClick={setActiveNode} 
               width={dimensions.width} 
               height={dimensions.height} 
+              bgMode={bgMode}
             />
           ) : null}
         </div>
