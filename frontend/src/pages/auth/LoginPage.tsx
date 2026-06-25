@@ -4,7 +4,7 @@ import { PageShell } from "../../shared/components/PageShell";
 import { useAuthStore } from "../../features/auth/stores/authStore";
 import { authApi } from "../../features/auth/api/authApi";
 import { usersApi } from "../../features/auth/api/usersApi";
-import { LogIn } from "lucide-react";
+import { LogIn, ShieldAlert } from "lucide-react";
 import { SyncHistoryModal } from "../../features/auth/components/SyncHistoryModal";
 import { getAnonymousClientId } from "../../shared/utils/anonymousClientId";
 
@@ -110,6 +110,16 @@ export const LoginPage = () => {
           Chưa có tài khoản?{" "}
           <Link to="/register" className="font-bold text-teal hover:underline">
             Tạo tài khoản mới
+          </Link>
+        </div>
+
+        <div className="mt-4 border-t border-slate-200 dark:border-slate-800 pt-4 text-center">
+          <Link 
+            to="/admin/login" 
+            className="flex items-center justify-center gap-2 text-sm font-semibold text-slate-400 hover:text-red-500 transition-colors"
+          >
+            <ShieldAlert size={16} />
+            Đăng nhập dành cho Quản trị viên
           </Link>
         </div>
       </div>
