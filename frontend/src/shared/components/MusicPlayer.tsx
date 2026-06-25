@@ -29,7 +29,7 @@ export function MusicPlayer() {
     <>
       <audio
         ref={audioRef}
-        src="https://upload.wikimedia.org/wikipedia/commons/4/44/Erik_Satie_-_Gymnop%C3%A9die_No._1.ogg"
+        src="/bgm.mp3"
         loop
         preload="auto"
       />

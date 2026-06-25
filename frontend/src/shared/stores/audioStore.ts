@@ -12,12 +12,12 @@ export const useAudioStore = create<AudioState>()(
   persist(
     (set) => ({
       isPlaying: false, // Default to false since browsers block autoplay
-      volume: 0.3, // Soft default volume
+      volume: 0.1, // 10% volume
       togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying })),
       setVolume: (volume) => set({ volume }),
     }),
     {
-      name: "audio-storage",
+      name: "audio-storage-v3",
     }
   )
 );
