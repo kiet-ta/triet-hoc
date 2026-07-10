@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search, X, Loader2 } from "lucide-react";
 import { knowledgeApi, type KnowledgeSearchResult } from "../api/knowledgeApi";
+import { useIsMobile } from "../../../shared/hooks/useIsMobile";
 
 type Props = {
   onSelectNode: (slug: string) => void;
@@ -29,7 +30,11 @@ export function KnowledgeSearch({ onSelectNode }: Props) {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const isMobile = useIsMobile();
+  const collapsedOnMobile = isMobile && !isExpanded;
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(query.trim()), 300);
@@ -40,11 +45,16 @@ export function KnowledgeSearch({ onSelectNode }: Props) {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false);
+        if (isMobile && !query) setIsExpanded(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [isMobile, query]);
+
+  useEffect(() => {
+    if (isMobile && isExpanded) inputRef.current?.focus();
+  }, [isMobile, isExpanded]);
 
   const { data, isFetching } = useQuery({
     queryKey: ["knowledge_search", debouncedQuery],
@@ -60,6 +70,7 @@ export function KnowledgeSearch({ onSelectNode }: Props) {
     setIsOpen(false);
     setQuery("");
     setDebouncedQuery("");
+    if (isMobile) setIsExpanded(false);
   };
 
   const handleClear = () => {
@@ -68,11 +79,26 @@ export function KnowledgeSearch({ onSelectNode }: Props) {
     setIsOpen(false);
   };
 
+  if (collapsedOnMobile) {
+    return (
+      <div className="pointer-events-auto">
+        <button
+          onClick={() => setIsExpanded(true)}
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-white/80 dark:bg-slate-900/80 shadow-lg backdrop-blur-sm text-ink dark:text-white hover:bg-teal hover:text-white dark:hover:bg-teal transition-all"
+          aria-label="Tìm kiếm"
+        >
+          <Search size={20} />
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div ref={containerRef} className="relative w-full sm:max-w-sm pointer-events-auto">
       <div className="flex h-12 items-center gap-2 rounded-2xl bg-white/80 dark:bg-slate-900/80 shadow-lg backdrop-blur-sm px-4 text-ink dark:text-white">
         <Search size={18} className="flex-shrink-0 text-slate-400" />
         <input
+          ref={inputRef}
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
@@ -91,11 +117,18 @@ export function KnowledgeSearch({ onSelectNode }: Props) {
           >
             <X size={16} />
           </button>
+        ) : isMobile ? (
+          <button
+            onClick={() => setIsExpanded(false)}
+            className="flex-shrink-0 rounded-full p-0.5 text-slate-400 hover:bg-slate-100 hover:text-ink dark:hover:bg-slate-800 dark:hover:text-white transition-colors"
+          >
+            <X size={16} />
+          </button>
         ) : null}
       </div>
 
       {showDropdown && (
-        <div className="absolute left-0 right-0 top-14 max-h-[60vh] overflow-y-auto rounded-2xl bg-white/95 dark:bg-slate-900/95 shadow-2xl backdrop-blur-sm border border-slate-200 dark:border-slate-800 p-2">
+        <div className="absolute left-0 right-0 top-14 z-30 max-h-[60vh] overflow-y-auto rounded-2xl bg-white/95 dark:bg-slate-900/95 shadow-2xl backdrop-blur-sm border border-slate-200 dark:border-slate-800 p-2">
           {isFetching && results.length === 0 ? (
             <div className="p-4 text-center text-sm text-slate-400">Đang tìm...</div>
           ) : results.length === 0 ? (
