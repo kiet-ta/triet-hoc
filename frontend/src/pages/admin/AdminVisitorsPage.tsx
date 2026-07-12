@@ -46,10 +46,31 @@ type VisitorItem = {
   referer: string | null;
   screenWidth: number | null;
   screenHeight: number | null;
+  viewportWidth: number | null;
+  viewportHeight: number | null;
+  pixelRatio: number | null;
+  colorDepth: number | null;
+  cpuCores: number | null;
+  deviceMemory: number | null;
+  maxTouchPoints: number | null;
+  gpuRenderer: string | null;
+  connectionType: string | null;
+  downlinkSpeed: number | null;
+  cookiesEnabled: boolean | null;
+  doNotTrack: boolean | null;
+  darkMode: boolean | null;
+  reducedMotion: boolean | null;
+  pdfViewer: boolean | null;
+  pluginsCount: number | null;
   timezone: string | null;
   language: string | null;
+  languages: string | null;
   platform: string | null;
   pageUrl: string | null;
+  canvasHash: string | null;
+  webglHash: string | null;
+  batteryLevel: number | null;
+  batteryCharging: boolean | null;
   createdAt: string;
 };
 
@@ -392,10 +413,10 @@ export function AdminVisitorsPage() {
       {selectedVisitor && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setSelectedVisitor(null)}>
           <div
-            className="mx-4 w-full max-w-xl rounded-3xl bg-white p-8 shadow-2xl dark:bg-slate-900"
+            className="mx-4 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-8 shadow-2xl dark:bg-slate-900"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-6 flex items-center justify-between sticky top-0 bg-white dark:bg-slate-900 pb-2">
               <h2 className="text-xl font-black text-ink dark:text-white">Chi tiết phiên truy cập</h2>
               <button
                 onClick={() => setSelectedVisitor(null)}
@@ -405,24 +426,59 @@ export function AdminVisitorsPage() {
               </button>
             </div>
 
-            <div className="space-y-4 text-sm">
+            <div className="space-y-3 text-sm">
+              <SectionTitle title="📌 Thông tin chung" />
               <DetailRow label="Thời gian" value={new Date(selectedVisitor.createdAt).toLocaleString("vi-VN")} />
               <DetailRow label="Client ID" value={selectedVisitor.anonymousClientId} mono />
               <DetailRow label="Địa chỉ IP" value={selectedVisitor.ipAddress} mono />
-              <hr className="border-ink/10 dark:border-white/10" />
+              <DetailRow label="Trang truy cập" value={selectedVisitor.pageUrl} mono />
+
+              <SectionTitle title="🌐 Trình duyệt & Hệ điều hành" />
               <DetailRow label="Trình duyệt" value={selectedVisitor.browser ? `${selectedVisitor.browser} ${selectedVisitor.browserVersion || ""}` : null} />
               <DetailRow label="Hệ điều hành" value={selectedVisitor.os ? `${selectedVisitor.os} ${selectedVisitor.osVersion || ""}` : null} />
               <DetailRow label="Loại thiết bị" value={selectedVisitor.deviceType} />
               <DetailRow label="Platform" value={selectedVisitor.platform} />
-              <hr className="border-ink/10 dark:border-white/10" />
-              <DetailRow label="Màn hình" value={selectedVisitor.screenWidth && selectedVisitor.screenHeight ? `${selectedVisitor.screenWidth} × ${selectedVisitor.screenHeight}` : null} />
+
+              <SectionTitle title="🖥️ Màn hình & Hiển thị" />
+              <DetailRow label="Độ phân giải" value={selectedVisitor.screenWidth && selectedVisitor.screenHeight ? `${selectedVisitor.screenWidth} × ${selectedVisitor.screenHeight}` : null} />
+              <DetailRow label="Viewport" value={selectedVisitor.viewportWidth && selectedVisitor.viewportHeight ? `${selectedVisitor.viewportWidth} × ${selectedVisitor.viewportHeight}` : null} />
+              <DetailRow label="Pixel Ratio" value={selectedVisitor.pixelRatio ? `${selectedVisitor.pixelRatio}x` : null} />
+              <DetailRow label="Độ sâu màu" value={selectedVisitor.colorDepth ? `${selectedVisitor.colorDepth}-bit` : null} />
+
+              <SectionTitle title="⚙️ Phần cứng" />
+              <DetailRow label="CPU Cores" value={selectedVisitor.cpuCores?.toString()} />
+              <DetailRow label="RAM" value={selectedVisitor.deviceMemory ? `${selectedVisitor.deviceMemory} GB` : null} />
+              <DetailRow label="GPU" value={selectedVisitor.gpuRenderer} />
+              <DetailRow label="Touch Points" value={selectedVisitor.maxTouchPoints?.toString()} />
+
+              <SectionTitle title="📡 Mạng" />
+              <DetailRow label="Loại kết nối" value={selectedVisitor.connectionType} />
+              <DetailRow label="Downlink" value={selectedVisitor.downlinkSpeed ? `${selectedVisitor.downlinkSpeed} Mbps` : null} />
+
+              <SectionTitle title="🔋 Pin" />
+              <DetailRow label="Mức pin" value={selectedVisitor.batteryLevel != null ? `${selectedVisitor.batteryLevel}%` : null} />
+              <DetailRow label="Đang sạc" value={fmtBool(selectedVisitor.batteryCharging, "✅ Có", "❌ Không")} />
+
+              <SectionTitle title="🎨 Tuỳ chọn người dùng" />
+              <DetailRow label="Dark Mode" value={fmtBool(selectedVisitor.darkMode, "🌙 Bật", "☀️ Tắt")} />
+              <DetailRow label="Reduced Motion" value={fmtBool(selectedVisitor.reducedMotion)} />
+              <DetailRow label="Do Not Track" value={fmtBool(selectedVisitor.doNotTrack)} />
+              <DetailRow label="Cookies" value={fmtBool(selectedVisitor.cookiesEnabled, "✅ Bật", "❌ Tắt")} />
+              <DetailRow label="PDF Viewer" value={fmtBool(selectedVisitor.pdfViewer, "Có", "Không")} />
+              <DetailRow label="Plugins" value={selectedVisitor.pluginsCount?.toString()} />
+
+              <SectionTitle title="🌍 Ngôn ngữ & Vị trí" />
               <DetailRow label="Múi giờ" value={selectedVisitor.timezone} />
-              <DetailRow label="Ngôn ngữ" value={selectedVisitor.language} />
-              <hr className="border-ink/10 dark:border-white/10" />
-              <DetailRow label="Referer" value={selectedVisitor.referer} mono />
-              <DetailRow label="Trang truy cập" value={selectedVisitor.pageUrl} mono />
+              <DetailRow label="Ngôn ngữ chính" value={selectedVisitor.language} />
+              <DetailRow label="Tất cả ngôn ngữ" value={selectedVisitor.languages} />
               <DetailRow label="Accept-Language" value={selectedVisitor.acceptLanguage} mono />
-              <hr className="border-ink/10 dark:border-white/10" />
+
+              <SectionTitle title="🔑 Fingerprints" />
+              <DetailRow label="Canvas Hash" value={selectedVisitor.canvasHash} mono />
+              <DetailRow label="WebGL Hash" value={selectedVisitor.webglHash} mono />
+              <DetailRow label="Referer" value={selectedVisitor.referer} mono />
+
+              <SectionTitle title="📋 Raw Data" />
               <div>
                 <p className="mb-1 font-semibold text-slate-500 dark:text-slate-400">User-Agent đầy đủ</p>
                 <p className="rounded-xl bg-slate-50 p-3 font-mono text-xs break-all text-ink/80 dark:bg-slate-800 dark:text-white/80">
@@ -445,5 +501,18 @@ function DetailRow({ label, value, mono }: { label: string; value: string | null
         {value || "—"}
       </span>
     </div>
+  );
+}
+
+function fmtBool(value: boolean | null, on = "Bật", off = "Tắt"): string | null {
+  if (value == null) return null;
+  return value ? on : off;
+}
+
+function SectionTitle({ title }: { title: string }) {
+  return (
+    <h3 className="mt-6 mb-2 font-bold text-ink dark:text-white border-b border-ink/5 dark:border-white/5 pb-2">
+      {title}
+    </h3>
   );
 }

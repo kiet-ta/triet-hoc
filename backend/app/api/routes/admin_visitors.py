@@ -30,10 +30,31 @@ class VisitorItem(BaseModel):
     referer: str | None = None
     screenWidth: int | None = None
     screenHeight: int | None = None
+    viewportWidth: int | None = None
+    viewportHeight: int | None = None
+    pixelRatio: float | None = None
+    colorDepth: int | None = None
+    cpuCores: int | None = None
+    deviceMemory: float | None = None
+    maxTouchPoints: int | None = None
+    gpuRenderer: str | None = None
+    connectionType: str | None = None
+    downlinkSpeed: float | None = None
+    cookiesEnabled: bool | None = None
+    doNotTrack: bool | None = None
+    darkMode: bool | None = None
+    reducedMotion: bool | None = None
+    pdfViewer: bool | None = None
+    pluginsCount: int | None = None
     timezone: str | None = None
     language: str | None = None
+    languages: str | None = None
     platform: str | None = None
     pageUrl: str | None = None
+    canvasHash: str | None = None
+    webglHash: str | None = None
+    batteryLevel: float | None = None
+    batteryCharging: bool | None = None
     createdAt: str
 
 
@@ -164,10 +185,31 @@ def get_visitors(
             referer=v.referer,
             screenWidth=v.screen_width,
             screenHeight=v.screen_height,
+            viewportWidth=v.viewport_width,
+            viewportHeight=v.viewport_height,
+            pixelRatio=v.pixel_ratio,
+            colorDepth=v.color_depth,
+            cpuCores=v.cpu_cores,
+            deviceMemory=v.device_memory,
+            maxTouchPoints=v.max_touch_points,
+            gpuRenderer=v.gpu_renderer,
+            connectionType=v.connection_type,
+            downlinkSpeed=v.downlink_speed,
+            cookiesEnabled=v.cookies_enabled,
+            doNotTrack=v.do_not_track,
+            darkMode=v.dark_mode,
+            reducedMotion=v.reduced_motion,
+            pdfViewer=v.pdf_viewer,
+            pluginsCount=v.plugins_count,
             timezone=v.timezone,
             language=v.language,
+            languages=v.languages,
             platform=v.platform,
             pageUrl=v.page_url,
+            canvasHash=v.canvas_hash,
+            webglHash=v.webgl_hash,
+            batteryLevel=v.battery_level,
+            batteryCharging=v.battery_charging,
             createdAt=v.created_at.isoformat(),
         )
         for v in visits

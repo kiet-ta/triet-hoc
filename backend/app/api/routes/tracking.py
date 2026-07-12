@@ -49,7 +49,7 @@ def _parse_user_agent(ua_string: str | None) -> dict:
     elif "cros" in ua:
         result["os"] = "ChromeOS"
 
-    # Detect Browser (order matters - check specific before generic)
+    # Detect Browser (order matters)
     if "opr/" in ua or "opera" in ua:
         result["browser"] = "Opera"
         m = re.search(r'opr/([\d.]+)', ua)
@@ -81,12 +81,38 @@ def _parse_user_agent(ua_string: str | None) -> dict:
 
 class VisitRequest(BaseModel):
     anonymousClientId: str
+    # Screen & display
     screenWidth: int | None = None
     screenHeight: int | None = None
+    viewportWidth: int | None = None
+    viewportHeight: int | None = None
+    pixelRatio: float | None = None
+    colorDepth: int | None = None
+    # Hardware
+    cpuCores: int | None = None
+    deviceMemory: float | None = None
+    maxTouchPoints: int | None = None
+    gpuRenderer: str | None = None
+    # Network
+    connectionType: str | None = None
+    downlinkSpeed: float | None = None
+    # Preferences
+    cookiesEnabled: bool | None = None
+    doNotTrack: bool | None = None
+    darkMode: bool | None = None
+    reducedMotion: bool | None = None
+    pdfViewer: bool | None = None
+    pluginsCount: int | None = None
+    # Locale & context
     timezone: str | None = None
     language: str | None = None
+    languages: str | None = None
     platform: str | None = None
     pageUrl: str | None = None
+    canvasHash: str | None = None
+    webglHash: str | None = None
+    batteryLevel: float | None = None
+    batteryCharging: bool | None = None
 
 
 @router.post("/visit")
@@ -94,7 +120,6 @@ def record_visit(body: VisitRequest, request: Request, db: Session = Depends(get
     ua_string = request.headers.get("user-agent")
     parsed_ua = _parse_user_agent(ua_string)
 
-    # Get real IP (handle proxies like Vercel/Cloudflare)
     ip = (
         request.headers.get("x-forwarded-for", "").split(",")[0].strip()
         or request.headers.get("x-real-ip")
@@ -114,10 +139,31 @@ def record_visit(body: VisitRequest, request: Request, db: Session = Depends(get
         referer=request.headers.get("referer"),
         screen_width=body.screenWidth,
         screen_height=body.screenHeight,
+        viewport_width=body.viewportWidth,
+        viewport_height=body.viewportHeight,
+        pixel_ratio=body.pixelRatio,
+        color_depth=body.colorDepth,
+        cpu_cores=body.cpuCores,
+        device_memory=body.deviceMemory,
+        max_touch_points=body.maxTouchPoints,
+        gpu_renderer=body.gpuRenderer,
+        connection_type=body.connectionType,
+        downlink_speed=body.downlinkSpeed,
+        cookies_enabled=body.cookiesEnabled,
+        do_not_track=body.doNotTrack,
+        dark_mode=body.darkMode,
+        reduced_motion=body.reducedMotion,
+        pdf_viewer=body.pdfViewer,
+        plugins_count=body.pluginsCount,
         timezone=body.timezone,
         language=body.language,
+        languages=body.languages,
         platform=body.platform,
         page_url=body.pageUrl,
+        canvas_hash=body.canvasHash,
+        webgl_hash=body.webglHash,
+        battery_level=body.batteryLevel,
+        battery_charging=body.batteryCharging,
     )
     db.add(visit)
     db.commit()

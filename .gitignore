@@ -16,4 +16,6 @@ frontend/dist/
 backend/.env
 frontend/.env
 
+docker-compose.override.local.yml
+
 .DS_Store
