@@ -28,6 +28,12 @@ export type AdminQuestion = {
 
 export type PhilosophyAdmin = PublicResult["dominant"];
 
+export type CourseStatus = {
+  courseCode: string;
+  isSuspended: boolean;
+  message: string | null;
+};
+
 export type AdminResult = {
   resultId: string;
   shareSlug: string;
@@ -86,6 +92,16 @@ export const adminApi = {
   },
   users() {
     return httpClient.get<Array<{ id: string; email: string; name: string | null; createdAt: string }>>("/admin/users", { token: getAdminToken() });
+  },
+  courseStatuses() {
+    return httpClient.get<CourseStatus[]>("/admin/courses", { token: getAdminToken() });
+  },
+  setCourseStatus(courseCode: string, isSuspended: boolean, message: string | null) {
+    return httpClient.put<CourseStatus>(
+      `/admin/courses/${courseCode}`,
+      { isSuspended, message },
+      { token: getAdminToken() },
+    );
   },
   get<T>(path: string) {
     return httpClient.get<T>(path, { token: getAdminToken() });

@@ -8,6 +8,7 @@ from app.models.admin_user import AdminUser
 from app.models.philosophy import Philosophy
 from app.models.question import Question
 from app.models.question_weight import QuestionWeight
+from app.repositories import course_status_repository
 from app.seed.philosophies_seed import PHILOSOPHIES
 from app.seed.questions_seed import QUESTIONS
 from app.seed.mln122_seed import MLN122_PHILOSOPHIES, MLN122_QUESTIONS
@@ -50,6 +51,9 @@ def seed_database(db: Session, ensure_admin: bool = True) -> None:
                     weight=weight,
                 )
             )
+
+    # Đảm bảo có bản ghi trạng thái (mở/tạm ngưng) cho các khoá được quản lý.
+    course_status_repository.list_statuses(db)
 
     if ensure_admin:
         admin = db.scalar(select(AdminUser).where(AdminUser.email == settings.admin_email))

@@ -5,6 +5,7 @@ from app.api.routes.mappers import question_public
 from app.core.database import get_db
 from app.repositories.question_repository import list_active_questions
 from app.schemas.question_schema import SCALE_LABELS, QuestionsResponse
+from app.services.course_service import ensure_course_active
 
 router = APIRouter(prefix="/questions", tags=["questions"])
 
@@ -17,6 +18,7 @@ def get_questions(
     limit: int | None = None,
     db: Session = Depends(get_db)
 ) -> QuestionsResponse:
+    ensure_course_active(db, course_code)
     randomize = limit is not None
     questions = list_active_questions(db, course_code=course_code, limit=limit, randomize=randomize)
     return QuestionsResponse(

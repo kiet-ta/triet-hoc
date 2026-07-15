@@ -1,4 +1,5 @@
 from app.models.admin_user import AdminUser
+from app.models.course_status import CourseStatus
 from app.models.philosophy import Philosophy
 from app.models.question import Question
 from app.models.question_weight import QuestionWeight
@@ -13,6 +14,7 @@ from .user import User
 
 __all__ = [
     "AdminUser",
+    "CourseStatus",
     "Philosophy",
     "Question",
     "QuestionWeight",

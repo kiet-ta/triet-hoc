@@ -1,10 +1,49 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, History, Sparkles } from "lucide-react";
+import { ArrowRight, History, PauseCircle, Sparkles } from "lucide-react";
 import { AnimatePresence, motion, Variants } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 
 import { ButtonLink } from "../shared/components/Button";
 import { ThemeToggle } from "../shared/components/ThemeToggle";
 import { Illustration } from "../shared/illustrations";
+import { httpClient } from "../shared/api/httpClient";
+
+type CourseStatus = {
+  courseCode: string;
+  isSuspended: boolean;
+  message: string | null;
+};
+
+const DEFAULT_SUSPENDED_MESSAGE =
+  "Khoá này đang tạm ngưng truy cập để bảo trì. Vui lòng quay lại sau nhé!";
+
+function CourseCta({
+  courseCode,
+  status,
+}: {
+  courseCode: string;
+  status?: CourseStatus;
+}) {
+  if (status?.isSuspended) {
+    return (
+      <div className="relative mt-8">
+        <div className="flex w-full items-center justify-center gap-2 rounded-lg bg-ink/5 px-4 py-3 text-sm font-bold text-ink/60 dark:bg-white/10 dark:text-white/60">
+          <PauseCircle className="h-4 w-4" aria-hidden="true" />
+          Tạm ngưng truy cập
+        </div>
+        <p className="mt-2 text-xs leading-5 text-ink/60 dark:text-white/60">
+          {status.message || DEFAULT_SUSPENDED_MESSAGE}
+        </p>
+      </div>
+    );
+  }
+  return (
+    <ButtonLink to={`/quiz/${courseCode}/intro`} className="relative mt-8 w-full justify-center">
+      Bắt đầu quiz {courseCode}
+      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+    </ButtonLink>
+  );
+}
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -47,6 +86,14 @@ const subtitles = [
 
 export function LandingPage() {
   const [subtitleIndex, setSubtitleIndex] = useState(0);
+
+  const { data: courseStatuses } = useQuery({
+    queryKey: ["course_statuses"],
+    queryFn: () => httpClient.get<CourseStatus[]>("/courses/status"),
+    refetchInterval: 30000,
+  });
+  const statusOf = (code: string) =>
+    courseStatuses?.find((status) => status.courseCode === code);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -106,10 +153,7 @@ export function LandingPage() {
               <p className="relative mt-4 text-sm leading-6 text-ink/65 dark:text-white/65">
                 Bạn thường đối mặt với cuộc sống theo trường phái triết học nào? Khắc kỷ, Hiện sinh hay Vị lợi?
               </p>
-              <ButtonLink to="/quiz/MLN111/intro" className="relative mt-8 w-full justify-center">
-                Bắt đầu quiz MLN111
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </ButtonLink>
+              <CourseCta courseCode="MLN111" status={statusOf("MLN111")} />
             </motion.div>
 
             <motion.div
@@ -123,10 +167,7 @@ export function LandingPage() {
               <p className="relative mt-4 text-sm leading-6 text-ink/65 dark:text-white/65">
                 Cách bạn quản lý tài sản và sức lao động nói lên điều gì? Bạn là nhà tư bản thặng dư hay người tạo giá trị?
               </p>
-              <ButtonLink to="/quiz/MLN122/intro" className="relative mt-8 w-full justify-center">
-                Bắt đầu quiz MLN122
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </ButtonLink>
+              <CourseCta courseCode="MLN122" status={statusOf("MLN122")} />
             </motion.div>
           </motion.div>
 

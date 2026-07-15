@@ -18,6 +18,7 @@ import { AdminUsersPage } from "../pages/admin/AdminUsersPage";
 import { AdminQuestionsPage } from "../pages/admin/AdminQuestionsPage";
 import { AdminPhilosophiesPage } from "../pages/admin/AdminPhilosophiesPage";
 import { AdminVisitorsPage } from "../pages/admin/AdminVisitorsPage";
+import { AdminCoursesPage } from "../pages/admin/AdminCoursesPage";
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
       { path: "admin/questions", element: <AdminQuestionsPage /> },
       { path: "admin/philosophies", element: <AdminPhilosophiesPage /> },
       { path: "admin/visitors", element: <AdminVisitorsPage /> },
+      { path: "admin/courses", element: <AdminCoursesPage /> },
       { path: "*", element: <Navigate to="/" replace /> },
     ]
   }

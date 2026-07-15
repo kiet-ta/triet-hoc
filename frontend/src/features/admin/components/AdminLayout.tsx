@@ -12,6 +12,7 @@ const links = [
   { href: "/admin/users", label: "Người dùng" },
   { href: "/admin/questions", label: "Câu hỏi" },
   { href: "/admin/philosophies", label: "Hồ sơ triết học" },
+  { href: "/admin/courses", label: "Trạng thái khoá" },
 ];
 
 export function AdminLayout({ children }: { children: ReactNode }) {
