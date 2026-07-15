@@ -37,6 +37,16 @@ function CourseCard({ status }: { status: CourseStatus }) {
 
   const suspended = status.isSuspended;
 
+  // Tạm ngưng cả khoá ảnh hưởng mọi người (kể cả khách vãng lai) nên hỏi xác nhận.
+  const handleSuspend = () => {
+    const confirmed = window.confirm(
+      `Tạm ngưng toàn bộ ${meta.label}? Mọi người dùng và khách vãng lai sẽ không vào được quiz của khoá này cho đến khi bạn mở lại.`,
+    );
+    if (confirmed) {
+      mutation.mutate({ isSuspended: true, message: message.trim() || null });
+    }
+  };
+
   return (
     <Card>
       <div className="flex flex-col gap-4">
@@ -86,9 +96,7 @@ function CourseCard({ status }: { status: CourseStatus }) {
             <Button
               type="button"
               variant="ghost"
-              onClick={() =>
-                mutation.mutate({ isSuspended: true, message: message.trim() || null })
-              }
+              onClick={handleSuspend}
               disabled={mutation.isPending}
               className="border border-red-500/40 text-red-600 hover:bg-red-500/10 dark:text-red-400"
             >
